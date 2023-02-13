@@ -8,13 +8,27 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
+        os: ["ubuntu-latest", "ubuntu-20.04"]
         python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
         django-version: ["3.2", "4.0", "4.1", "4.2a1"]
         exclude:
+          - os: "ubuntu-latest"
+            python-version: "3.6"
+          
+          - os: "ubuntu-20.04"
+            python-version: "3.7"
+          - os: "ubuntu-20.04"
+            python-version: "3.8"
+          - os: "ubuntu-20.04"
+            python-version: "3.9"
+          - os: "ubuntu-20.04"
+            python-version: "3.10"
+          - os: "ubuntu-20.04"
+            python-version: "3.11"
+
           - django-version: "3.2"
             python-version: "3.11"
 
@@ -34,6 +48,7 @@ jobs:
             python-version: "3.6"
           - django-version: "4.2a1"
             python-version: "3.7"
+    runs-on: ${{ matrix.os }}
     services:
       postgres:
         image: postgres
@@ -50,13 +65,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
-      if: ${{ matrix.python-version != '3.6' }}
       uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Set up Python ${{ matrix.python-version }}
-      if: ${{ matrix.python-version == '3.6' }}
-      uses: deadsnakes/action@v3.0.0
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install Dependencies
